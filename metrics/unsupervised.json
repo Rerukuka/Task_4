@@ -1,4 +1,71 @@
 {
-  "adjusted_rand": 1.0,
-  "nmi": 1.0
+  "adjusted_rand": 0.8642549558095127,
+  "nmi": 0.903139479857195,
+  "clusters": [
+    {
+      "cluster": 0,
+      "size": 68,
+      "majority_class": "green_squares",
+      "majority_count": 68,
+      "class_counts": {
+        "blue_triangles": 0,
+        "green_squares": 68,
+        "orange_hexagons": 0,
+        "purple_diamonds": 0,
+        "red_circles": 0
+      }
+    },
+    {
+      "cluster": 1,
+      "size": 100,
+      "majority_class": "orange_hexagons",
+      "majority_count": 100,
+      "class_counts": {
+        "blue_triangles": 0,
+        "green_squares": 0,
+        "orange_hexagons": 100,
+        "purple_diamonds": 0,
+        "red_circles": 0
+      }
+    },
+    {
+      "cluster": 2,
+      "size": 103,
+      "majority_class": "blue_triangles",
+      "majority_count": 100,
+      "class_counts": {
+        "blue_triangles": 100,
+        "green_squares": 3,
+        "orange_hexagons": 0,
+        "purple_diamonds": 0,
+        "red_circles": 0
+      }
+    },
+    {
+      "cluster": 3,
+      "size": 100,
+      "majority_class": "red_circles",
+      "majority_count": 100,
+      "class_counts": {
+        "blue_triangles": 0,
+        "green_squares": 0,
+        "orange_hexagons": 0,
+        "purple_diamonds": 0,
+        "red_circles": 100
+      }
+    },
+    {
+      "cluster": 4,
+      "size": 129,
+      "majority_class": "purple_diamonds",
+      "majority_count": 100,
+      "class_counts": {
+        "blue_triangles": 0,
+        "green_squares": 29,
+        "orange_hexagons": 0,
+        "purple_diamonds": 100,
+        "red_circles": 0
+      }
+    }
+  ]
 }

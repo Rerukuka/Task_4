@@ -18,6 +18,7 @@ tf = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.485,0.456,0.406],[0.229,0.224,0.225])
 ])
+
 test_ds = datasets.ImageFolder(str(DATA/'test'), transform=tf)
 dl = DataLoader(test_ds, batch_size=32, shuffle=False, num_workers=0)
 classes = test_ds.classes
@@ -38,6 +39,7 @@ class ResNet18Features(nn.Module):
 
 featnet = ResNet18Features().to(device).eval()
 
+
 Xs, Ys = [], []
 with torch.no_grad():
     for xb, yb in dl:
@@ -46,19 +48,72 @@ with torch.no_grad():
         Xs.append(fb); Ys.append(yb.numpy())
 X = np.concatenate(Xs,0); y = np.concatenate(Ys,0)
 
+
 kmeans = KMeans(n_clusters=len(classes), n_init=10, random_state=42)
 labels = kmeans.fit_predict(X)
+
 
 ari = adjusted_rand_score(y, labels)
 nmi = normalized_mutual_info_score(y, labels)
 
+
 xy = PCA(n_components=2, random_state=42).fit_transform(X)
-plt.figure(figsize=(5,4)); plt.scatter(xy[:,0], xy[:,1], c=y, s=12, alpha=0.85)
-plt.title('PCA — TRUE labels'); plt.tight_layout(); plt.savefig(OUT/'pca_true.png', dpi=150); plt.close()
-plt.figure(figsize=(5,4)); plt.scatter(xy[:,0], xy[:,1], c=labels, s=12, alpha=0.85)
-plt.title('PCA — KMeans clusters'); plt.tight_layout(); plt.savefig(OUT/'pca_kmeans.png', dpi=150); plt.close()
+
+
+
+fig1, ax1 = plt.subplots(figsize=(6,5))
+for i, cls in enumerate(classes):
+    m = (y == i)
+    ax1.scatter(xy[m,0], xy[m,1], s=12, alpha=0.85, label=f"{cls} (n={int(m.sum())})")
+ax1.set_title('PCA — TRUE labels')
+ax1.set_xlabel('PC1'); ax1.set_ylabel('PC2')
+ax1.legend(title='Class (support)', fontsize=8)
+fig1.tight_layout()
+fig1.savefig(OUT/'pca_true.png', dpi=150)
+plt.close(fig1)
+
+
+
+K = len(classes); C = len(classes)
+cm = np.zeros((K, C), dtype=int) 
+cluster_summary = []
+
+fig2, ax2 = plt.subplots(figsize=(6,5))
+for k in range(K):
+    mk = (labels == k)
+    counts = np.bincount(y[mk], minlength=C)
+    cm[k] = counts
+    maj = int(np.argmax(counts))
+    maj_count = int(counts[maj])
+    total = int(mk.sum())
+
+    ax2.scatter(xy[mk,0], xy[mk,1], s=12, alpha=0.85,
+                label=f"Cluster {k} → {classes[maj]} ({maj_count}/{total})")
+
+    cluster_summary.append({
+        "cluster": k,
+        "size": total,
+        "majority_class": classes[maj],
+        "majority_count": maj_count,
+        "class_counts": {classes[i]: int(counts[i]) for i in range(C)}
+    })
+
+ax2.set_title('PCA — KMeans clusters (legend shows majority class)')
+ax2.set_xlabel('PC1'); ax2.set_ylabel('PC2')
+
+ax2.text(0.02, 0.02, f"ARI={ari:.3f}\nNMI={nmi:.3f}",
+         transform=ax2.transAxes, fontsize=9,
+         bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+ax2.legend(title='Cluster → majority class (hits/size)', fontsize=8)
+fig2.tight_layout()
+fig2.savefig(OUT/'pca_kmeans.png', dpi=150)
+plt.close(fig2)
 
 with open(MET/'unsupervised.json','w',encoding='utf-8') as f:
-    json.dump({'adjusted_rand':float(ari), 'nmi':float(nmi)}, f, indent=2)
+    json.dump({
+        'adjusted_rand': float(ari),
+        'nmi': float(nmi),
+        'clusters': cluster_summary
+    }, f, indent=2, ensure_ascii=False)
 
-print('Saved unsupervised metrics and PCA plots.')
+print('Saved unsupervised metrics, legends, and PCA plots.')

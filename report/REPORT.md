@@ -10,8 +10,8 @@
 - See `outputs/cm_supervised.png`
 
 ## Unsupervised (k-Means on features)
-- Adjusted Rand Index (ARI): **1.0000**
-- Normalized Mutual Information (NMI): **1.0000**
+- Adjusted Rand Index (ARI): **0.8643**
+- Normalized Mutual Information (NMI): **0.9031**
 - See PCA plots: `outputs/pca_true.png`, `outputs/pca_kmeans.png`
 
 ## Notes

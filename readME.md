@@ -37,8 +37,8 @@ task4_full_project/
 
 **Dataset (included):**  
 - **Classes (4):** `red_circle`, `green_square`, `blue_triangle`, `yellow_star`  
-- **Per class:** 200 images → **train 140 / val 30 / test 30**  
-- **Total labeled:** 800
+- **Per class:** 100 images → **train 500 / val 500 / test 500**  
+- **Total labeled:** 500
 
 ---
 
